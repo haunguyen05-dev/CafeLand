@@ -14,10 +14,14 @@ export function Cart() {
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
 
-    const user_id = "671f00000111111111111111"; 
+    const storedUser = localStorage.getItem("user");
+    const user_id = storedUser ? JSON.parse(storedUser)._id : null;
+
 
     useEffect(() => {
+    if (!user_id) return; 
     const fetchCart = async () => {
+        
         try {
         const res = await fetch(`http://localhost:3000/carts/get/${user_id}`);
         const data = await res.json();
@@ -29,7 +33,7 @@ export function Cart() {
     };
 
     fetchCart();
-    }, []);
+    }, [user_id]);
 
     useEffect(() => {
         const getProducts = async () => {
@@ -59,6 +63,36 @@ export function Cart() {
 
     const total = mergedCart.reduce((sum, item) => sum + item.total_price, 0);
 
+    const onClickOrder = async () => {
+        try{
+            const order = {
+                amount: total,
+                bankCode:"",
+                language: "vn",
+                user_id: user_id,
+            };
+
+            const url = "http://localhost:3000/orders/create_payment_url";
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(order),
+            });
+
+            const result = await response.json();
+
+            if (result.paymentUrl){
+                window.location.href = result.paymentUrl;
+            }else{
+                alert("Không thể tao đường dẫn thanh toán. Vui lòng thử lại");
+                console.error("Lỗi khi nhận paymentUrl:", result);
+            }
+        } catch (error) {
+            console.error("Lỗi khi đặt hàng:", error);
+            alert("Đã xảy ra lỗi khi kết nối đến máy chủ thanh toán");
+        }
+    };
+
     return (
         <div className="cart-page">
             <h2>GIỎ HÀNG CỦA BẠN</h2>
@@ -79,7 +113,9 @@ export function Cart() {
 
             <div className="cart-total">
                 <h3>Tổng cộng: {total.toLocaleString()}đ</h3>
-                <button className="checkout-btn">Thanh toán</button>
+                <button className="checkout-btn" onClick={onClickOrder}>
+                    Thanh toán
+                    </button>
             </div>
         </div>
     );

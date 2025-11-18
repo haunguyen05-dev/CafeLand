@@ -6,17 +6,15 @@ const router = express.Router();
 const db = await connectDB();
 const cart = db.collection('carts');
 
-router.get('/get/:id', async (req, res) => {
+router.get('/get/:user_id', async (req, res) => {
   try {
-    const user_id = req.params.id;
-    const results = await cart.find({user_id: new ObjectId(user_id)}).toArray();
+    const user_id = req.params.user_id;
+    const results = await cart.find({ user_id: new ObjectId(user_id) }).toArray();
 
     return res.status(200).json(results);
   } catch (error) {
     console.error('Lỗi khi lấy giỏ hàng:', error);
-    return res.status(500).json({
-      message: 'Lỗi server khi lấy giỏ hàng.',
-    });
+    return res.status(500).json({ message: 'Lỗi server khi lấy giỏ hàng.' });
   }
 });
 

@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+
 import "../css/DetailProduct.css";
 import type { Product } from "../interfaces/Product";
 import type { Store } from "../interfaces/Store";
 import { BsCartPlusFill } from "react-icons/bs";
 import { IoAdd } from "react-icons/io5";
 import { GoDash } from "react-icons/go";
+
 
 export function DetailProduct() {
   const [product, setProduct] = useState<Product | null>(null);
@@ -88,6 +90,10 @@ export function DetailProduct() {
     return <p style={{ textAlign: "center" }}>Đang tải chi tiết sản phẩm...</p>;
   }
 
+  const handleBuyNow = () => {
+    window.location.href = "/cart"
+  }
+
   return (
     <div className="detail-page">
       <div className="detail-wrapper flex-center">
@@ -113,7 +119,7 @@ export function DetailProduct() {
               <BsCartPlusFill />
               <span>Thêm vào giỏ</span>
             </div>
-            <div className="dt-icbtn">Mua ngay</div>
+            <div className="dt-icbtn" onClick={handleBuyNow}>Mua ngay</div>
           </div>
         </div>
       </div>

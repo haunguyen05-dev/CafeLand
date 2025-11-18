@@ -1,0 +1,55 @@
+.vnpay-return-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+  min-height: 70vh;
+  background-color: #f4f4f4;
+}
+
+.return-container {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  padding: 30px;
+  text-align: center;
+  max-width: 500px;
+  width: 100%;
+}
+
+.return-container h2 {
+  margin-top: 0;
+  font-size: 24px;
+}
+
+/* Giao diện khi thành công */
+.return-container.success h2 {
+  color: #28a745; /* Màu xanh lá */
+}
+
+/* Giao diện khi thất bại */
+.return-container.failure h2 {
+  color: #dc3545; /* Màu đỏ */
+}
+
+.return-container p {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #333;
+  margin-bottom: 30px;
+}
+
+.return-home-btn {
+  display: inline-block;
+  padding: 12px 25px;
+  background-color: #007bff;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.return-home-btn:hover {
+  background-color: #0056b3;
+}

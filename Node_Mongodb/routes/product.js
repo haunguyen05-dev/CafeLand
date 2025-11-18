@@ -123,4 +123,10 @@ router.get('/images/:id', async (req, res) => {
   }
 });
 
+router.get('/product/cart/:userId', async function(req, res){
+  const database = await db();
+  const cart = database.collection('carts')
+  const result = await cart.findOne({user_id: req.params.userId});
+  res.json({cart: result});
+})
 export default router;

@@ -1,0 +1,58 @@
+.register-page {
+    padding: 20px;
+    max-width: 500px; /* Form đăng ký nên gọn hơn giỏ hàng */
+    margin: 0 auto;
+    font-family: Arial, sans-serif;
+}
+
+.register-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.register-form .form-group {
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.register-form label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
+.register-form input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.register-form input:focus {
+    outline: none;
+    border-color: #007bff;
+}
+
+.register-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #28a745; /* Màu xanh giống nút checkout-btn thường thấy */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.register-btn:hover {
+    background-color: #218838;
+}
+
+.register-btn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}

@@ -132,3 +132,30 @@ ul {
   border-radius: 50%;
   font-size: 12px;
 }
+.header-btn {
+  gap: 20px; /* Khoảng cách giữa cụm Login và Giỏ hàng */
+  padding-right: 40px; /* Cách lề phải màn hình một chút */
+}
+
+.auth-links {
+  gap: 10px;
+  color: #fff;
+  font-size: 14px;
+}
+
+.header-link {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 500;
+  transition: opacity 0.2s;
+}
+
+.header-link:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+.divider {
+  opacity: 0.6; /* Làm mờ dấu gạch đứng */
+  font-size: 14px;
+}

@@ -10,6 +10,9 @@ import product from './routes/product.js';
 import category from './routes/category.js';
 import store from './routes/store.js';
 import cart from './routes/cart.js';
+import ordersRouter from './routes/orders.js';
+import registerRouter from './routes/register.js';
+import loginRouter from './routes/login.js';
 
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
@@ -34,6 +37,9 @@ app.use('/products', product);
 app.use('/categories', category);
 app.use('/stores', store);
 app.use('/carts', cart);
+app.use('/orders', ordersRouter);
+app.use('/register', registerRouter);
+app.use('/login', loginRouter);
 
 app.use((req, res, next) => {
   res.status(404).send('Không tìm thấy trang');
