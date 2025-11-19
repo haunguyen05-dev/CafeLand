@@ -10,6 +10,7 @@ export function Register() {
     
     // State hiển thị trạng thái tải hoặc lỗi
     const [loading, setLoading] = useState(false);
+    const [role, setRole] = useState("user");
 
     const onRegister = async (e: React.FormEvent) => {
         e.preventDefault(); // Ngăn reload trang
@@ -27,7 +28,8 @@ export function Register() {
                 name,
                 email,
                 password,
-                phone // Phone có thể để trống như logic backend
+                phone,
+                role
             };
 
             const url = "http://localhost:3000/register"; 
@@ -100,6 +102,13 @@ export function Register() {
                             onChange={(e) => setPhone(e.target.value)}
                             placeholder="Nhập số điện thoại (tùy chọn)"
                         />
+                    </div>
+
+                    <div>
+                        <select value={role} onChange={(e) => setRole(e.target.value)}>
+                            <option value="user">User</option>
+                            <option value="store">Store</option>
+                        </select>
                     </div>
 
                     <button 

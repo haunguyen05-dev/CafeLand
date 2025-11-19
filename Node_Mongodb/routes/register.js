@@ -8,7 +8,7 @@ router.post('/', async (req, res) =>{
         const db = await connectDB();
         const users = db.collection("users");
 
-        const { name, email, password, phone } = req.body;
+        const { name, email, password, phone, role } = req.body;
 
         if(!name || !email || !password){
             return res.status(400).json({message: "Thiếu thông tin"});
@@ -24,6 +24,7 @@ router.post('/', async (req, res) =>{
             email,
             password,
             phone: phone || "",
+            role,
             created_at: new Date(),
         };
 
