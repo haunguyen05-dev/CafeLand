@@ -1,0 +1,383 @@
+/* ===== Khung trang admin ===== */
+.admin-page {
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 0 16px 40px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+/* Tiêu đề lớn */
+.admin-page h1 {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+/* Card trắng chung cho nội dung bên dưới */
+.admin-content {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 24px 28px 32px;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
+}
+
+/* ===== Tabs Cửa hàng / Người dùng / Voucher ===== */
+.admin-tabs {
+  display: flex;              /* đổi từ inline-flex -> flex */
+  justify-content: center;    /* căn giữa nội dung trong khối */
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 999px;
+  background: #e5e7eb;
+  margin: 8px auto 20px;      /* lúc này margin auto mới phát huy tác dụng */
+  width: fit-content;
+}
+
+.admin-tabs button {
+  border: none;
+  padding: 6px 16px;
+  border-radius: 999px;
+  background: transparent;
+  font-size: 0.9rem;
+  cursor: pointer;
+  color: #374151;
+  transition: all 0.18s ease;
+}
+
+.admin-tabs button:hover {
+  background: #d1d5db;
+}
+
+.admin-tabs button.active {
+  background: #0b3eac;
+  color: #ffffff;
+}
+
+/* ===== Tiêu đề từng module ===== */
+.admin-content h2 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+/* ===== Layout: form bên trái – bảng bên phải ===== */
+.voucher-layout,
+.admin-section-layout {
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr);
+  gap: 24px;
+  align-items: flex-start;
+}
+
+/* ===== Card form (dùng cho Store/User/Voucher) ===== */
+.voucher-form,
+.form-card {
+  background: #f9fafb;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  padding: 16px 18px 18px;
+}
+
+.voucher-form h3,
+.form-card h3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+/* Label + input đẹp hơn */
+.voucher-form label,
+.form-card label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.85rem;
+  margin-bottom: 8px;
+  color: #374151;
+}
+
+.voucher-form input,
+.voucher-form select,
+.voucher-form textarea,
+.form-card input,
+.form-card select,
+.form-card textarea {
+  margin-top: 3px;
+  padding: 7px 9px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: 0.9rem;
+  background-color: #ffffff;
+  color: #111827;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.voucher-form input:focus,
+.voucher-form select:focus,
+.voucher-form textarea:focus,
+.form-card input:focus,
+.form-card select:focus,
+.form-card textarea:focus {
+  border-color: #0b3eac;
+  box-shadow: 0 0 0 1px #0b3eac33;
+}
+
+.voucher-form textarea,
+.form-card textarea {
+  min-height: 70px;
+  resize: vertical;
+}
+
+/* Nút trong form */
+.voucher-form button,
+.form-card button {
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.voucher-form button[type="submit"],
+.form-card button[type="submit"] {
+  background: #0b3eac;
+  color: #ffffff;
+}
+
+.voucher-form button[type="button"],
+.form-card button[type="button"] {
+  background: #6b7280;
+  color: #ffffff;
+}
+
+.voucher-form button:hover,
+.form-card button:hover {
+  filter: brightness(0.95);
+}
+
+/* ===== Bảng danh sách (Store/User/Voucher) ===== */
+.voucher-list h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  background: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+}
+
+.admin-table thead {
+  background: #f3f4f6;
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
+}
+
+.admin-table th {
+  font-weight: 600;
+  color: #374151;
+}
+
+.admin-table tbody tr:nth-child(even) {
+  background: #f9fafb;
+}
+
+.admin-table tbody tr:hover {
+  background: #e5f0ff;
+}
+
+/* Nút trong bảng */
+.admin-table button {
+  padding: 4px 9px;
+  border-radius: 999px;
+  border: none;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.admin-table button:first-of-type {
+  background: #0b3eac;
+  color: #ffffff;
+}
+
+.admin-table button:last-of-type {
+  background: #dc2626;
+  color: #ffffff;
+  margin-left: 6px;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  justify-content: center;
+}
+
+.admin-table td button {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: all 0.18s ease-in-out;
+}
+
+.btn-edit {
+  background: #0b3eac;
+  color: white;
+}
+
+.btn-edit:hover {
+  background: #072d82;
+}
+
+.btn-delete {
+  background: #dc2626;
+  color: white;
+}
+
+.btn-delete:hover {
+  background: #b91c1c;
+}
+
+/* ===== Trạng thái lỗi / loading ===== */
+.admin-content p[style*="red"] {
+  margin-top: 4px;
+  margin-bottom: 8px;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  .voucher-layout,
+  .admin-section-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-content {
+    padding: 16px;
+  }
+}
+.login-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: #ececec;
+}
+
+.login-card {
+  background: white;
+  width: 360px;
+  padding: 30px 32px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.login-card h2 {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.login-card label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.9rem;
+  gap: 6px;
+}
+
+.login-card input {
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid #aaa;
+  font-size: 1rem;
+}
+
+.btn-submit {
+  background: #0b3eac;
+  color: white;
+  padding: 11px;
+  border-radius: 6px;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+.btn-submit:hover {
+  background: #072d82;
+}
+
+.error-text {
+  color: red;
+  text-align: center;
+  margin-bottom: 4px;
+}
+
+.admin-page {
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 0 24px 40px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.admin-page h1 {
+  text-align: center;
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 24px;
+}
+
+.admin-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 12px;              /* khoảng cách giữa các mục */
+  margin-bottom: 24px;
+}
+
+.admin-tab {
+  padding: 8px 20px;
+  border-radius: 999px;
+  background: #e5e7eb;
+  color: #374151;
+  font-size: 0.95rem;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.admin-tab:hover {
+  background: #d1d5db;
+}
+
+.admin-tab--active {
+  background: #0b3eac;
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.25);
+}
+
+/* Khung trắng chứa nội dung từng trang admin */
+.admin-card {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 24px 28px 32px;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
+  min-height: 260px;
+}

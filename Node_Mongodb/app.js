@@ -13,6 +13,7 @@ import cart from './routes/cart.js';
 import ordersRouter from './routes/orders.js';
 import registerRouter from './routes/register.js';
 import loginRouter from './routes/login.js';
+import voucherRouter from "./routes/voucher.js"; 
 
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
@@ -40,6 +41,7 @@ app.use('/carts', cart);
 app.use('/orders', ordersRouter);
 app.use('/register', registerRouter);
 app.use('/login', loginRouter);
+app.use("/vouchers", voucherRouter); 
 
 app.use((req, res, next) => {
   res.status(404).send('Không tìm thấy trang');
