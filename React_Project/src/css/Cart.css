@@ -14,6 +14,12 @@
     margin: 0 auto;
 }
 
+.total-price {
+    color: #c23e00ff;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
 .cart-page h2 {
     text-align: center;
     font-size: 1.8rem;

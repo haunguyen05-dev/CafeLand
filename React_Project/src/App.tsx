@@ -67,7 +67,7 @@ function App() {
                       style={{ 
                         background: "transparent", 
                         border: "none", 
-                        color: "#ff6b6b",
+                        color: "#c23e00ff",
                         cursor: "pointer",
                         display: "flex",
                         alignItems: "center"

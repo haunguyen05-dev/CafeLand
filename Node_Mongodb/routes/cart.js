@@ -84,4 +84,23 @@ router.post('/add', async (req, res) => {
   }
 });
 
+router.delete('/remove', async (req, res) => {
+  try {
+    const { user_id, product_id } = req.body;
+    if (!user_id || !product_id) {
+      return res.status(400).json({ message: 'Thiếu dữ liệu trong body.' });
+    }
+    const userObjectId = new ObjectId(user_id);
+    const productObjectId = new ObjectId(product_id);   
+    await cart.updateOne(
+      { user_id: userObjectId },
+      { $pull: { items: { product_id: productObjectId } } }
+    );
+    return res.status(200).json({ message: 'Đã xóa sản phẩm khỏi giỏ hàng.' });
+  } catch (error) {
+    console.error('Lỗi khi xóa sản phẩm khỏi giỏ hàng:', error);
+    return res.status(500).json({ message: 'Lỗi server khi xóa sản phẩm khỏi giỏ hàng.' });
+  }
+});
+
 export default router;

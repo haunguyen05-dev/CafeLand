@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
+import { IoCloseOutline } from "react-icons/io5";
 import "../css/Register.css";
 
 export function Register() {
@@ -10,6 +12,7 @@ export function Register() {
     
     // State hiển thị trạng thái tải hoặc lỗi
     const [loading, setLoading] = useState(false);
+    const [isOpen, setIsOpen] = useState(true);
 
     const onRegister = async (e: React.FormEvent) => {
         e.preventDefault(); // Ngăn reload trang
@@ -56,10 +59,23 @@ export function Register() {
         }
     };
 
+    const handleClose = () => {
+        setIsOpen(false);
+        window.location.href = "/";
+    };
+
+    if (!isOpen) {
+        return null;
+    }
+
     return (
-        <div className="register-page">
-            <div className="register-container">
-                <h2>ĐĂNG KÝ TÀI KHOẢN</h2>
+        <div className="register-overlay">
+            <div className="register-modal">
+                <button className="close-btn" onClick={handleClose}>
+                    <IoCloseOutline size={24} />
+                </button>
+
+                <h2 className="register-title">ĐĂNG KÝ TÀI KHOẢN</h2>
                 
                 <form className="register-form" onSubmit={onRegister}>
                     <div className="form-group">
@@ -109,6 +125,11 @@ export function Register() {
                     >
                         {loading ? "Đang xử lý..." : "Đăng ký ngay"}
                     </button>
+
+                    <div className="register-footer">
+                        <p>Đã có tài khoản?</p> 
+                        <Link to="/login" className="login-link">Đăng nhập ngay</Link>
+                    </div>
                 </form>
             </div>
         </div>

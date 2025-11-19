@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5"; 
+import { IoEyeOutline, IoEyeOffOutline, IoCloseOutline } from "react-icons/io5"; 
 
 import "../css/Login.css";
 
@@ -9,6 +9,7 @@ export function Login() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
 
   const onLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,9 +41,22 @@ export function Login() {
     }
   };
 
+  const handleClose = () => {
+    setIsOpen(false);
+    window.location.href = "/";
+  };
+
+  if (!isOpen) {
+    return null;
+  }
+
   return (
-    <div className="login-page">
-      <div className="login-card">
+    <div className="login-overlay">
+      <div className="login-modal">
+        <button className="close-btn" onClick={handleClose}>
+          <IoCloseOutline size={24} />
+        </button>
+
         <h2 className="login-title">CHÀO MỪNG TRỞ LẠI</h2>
         <p className="login-subtitle">Vui lòng đăng nhập tài khoản của bạn</p>
 
