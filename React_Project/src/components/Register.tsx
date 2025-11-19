@@ -9,6 +9,7 @@ export function Register() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [phone, setPhone] = useState("");
+    const [role, setRole] = useState("user");
     
     // State hiển thị trạng thái tải hoặc lỗi
     const [loading, setLoading] = useState(false);
@@ -30,7 +31,8 @@ export function Register() {
                 name,
                 email,
                 password,
-                phone // Phone có thể để trống như logic backend
+                phone,
+                role
             };
 
             const url = "http://localhost:3000/register"; 
@@ -47,7 +49,6 @@ export function Register() {
                 alert(result.message || "Đăng ký thành công!");
                  window.location.href = "/" 
             } else {
-                // Hiển thị lỗi từ backend (ví dụ: "Email đã tồn tại")
                 alert(result.message || "Đăng ký thất bại");
             }
 
@@ -108,14 +109,18 @@ export function Register() {
                         />
                     </div>
 
-                    <div className="form-group">
-                        <label>Số điện thoại</label>
+                    <label>Số điện thoại</label>
+                    <div style={{"marginTop": "5px"}}>
                         <input 
                             type="text" 
                             value={phone}
                             onChange={(e) => setPhone(e.target.value)}
                             placeholder="Nhập số điện thoại (tùy chọn)"
                         />
+                        <select value={role} onChange={(e) => setRole(e.target.value)}>
+                            <option value="user">User</option>
+                            <option value="store">Store</option>
+                        </select>
                     </div>
 
                     <button 
