@@ -4,10 +4,10 @@
     align-items: center;
     flex-wrap: wrap;
     gap: 30px;
-    width: 65%;
+    width: 1595px;
     overflow: auto;
     scrollbar-width: none;
-    padding: 20px 0 40px 0;
+    padding: 20px 200px 40px 200px;
 }
 
 .product-item {

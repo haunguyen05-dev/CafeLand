@@ -16,7 +16,9 @@ export function DetailProduct() {
   const [store, setStore] = useState<Store | null>(null);
   const [quantity, setQuantity] = useState<number>(1);
 
-  const user_id = "671f00000111111111111111"
+  const storedUserString = localStorage.getItem("user");
+  const storedUser = storedUserString ? JSON.parse(storedUserString) : null;
+  const user_id = storedUser?._id || null;
   
   const add = () => {
     setQuantity(quantity + 1);
@@ -35,6 +37,8 @@ export function DetailProduct() {
           `http://localhost:3000/products/get/${_id}`
         );
         const data = await res.json();
+        console.log(data);
+        
         setProduct(data);        
         setStoreId(data.store_id);        
       } catch (error) {

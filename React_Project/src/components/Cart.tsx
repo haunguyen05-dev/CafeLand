@@ -14,10 +14,10 @@ export function Cart() {
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
 
-    const storedUser = localStorage.getItem("user");
-    const user_id = storedUser ? JSON.parse(storedUser)._id : null;
-
-
+    const storedUserString = localStorage.getItem("user");
+    const storedUser = storedUserString ? JSON.parse(storedUserString) : null;
+    const user_id = storedUser?._id || null;    
+    
     useEffect(() => {
     if (!user_id) return; 
     const fetchCart = async () => {
@@ -27,6 +27,8 @@ export function Cart() {
         const data = await res.json();
 
         setCartItems(data[0]?.items || []);
+        console.log(cartItems);
+        
         } catch (error) {
         console.error("Lỗi khi lấy giỏ hàng:", error);
         }

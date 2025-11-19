@@ -47,13 +47,19 @@ function App() {
             <Logo />
           </Link>
           <div className="header-btn flex-center">
+            <Link to={"/cart"}>
+              <div className="header-ic flex-center" style={{ gap: "15px" }}>
+                <IoCart />
+                <span className="flex-center">GIỎ HÀNG</span>
+              </div>
+            </Link>
+
             <div className="auth-links flex-center">
               {user ? (
-                <div className="user-info flex-center" style={{ gap: "10px", color: "white", marginRight: "15px" }}>
+                <div className="user-info flex-center" style={{ gap: "10px", color: "white" }}>
                    <IoPersonCircleOutline size={24} />
                    <span style={{ fontWeight: "bold", fontSize: "14px" }}>
-                     {/* 3. Dùng user?.name để an toàn (nếu lỗi thì hiện chữ "Bạn") */}
-                     Chào, {user?.name || "Bạn"}
+                    {user?.name || "Bạn"}
                    </span>
                    <button 
                       onClick={handleLogout} 
@@ -78,13 +84,6 @@ function App() {
                 </>
               )}
             </div>
-
-            <Link to={"/cart"}>
-              <div className="header-ic flex-center" style={{ gap: "15px" }}>
-                <IoCart />
-                <span className="flex-center">GIỎ HÀNG</span>
-              </div>
-            </Link>
           </div>
         </div>
         <div className="header flex-center">
