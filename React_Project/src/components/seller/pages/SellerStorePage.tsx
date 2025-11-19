@@ -21,25 +21,17 @@ export default function SellerStorePage() {
       setLoading(true);
       setError("");
 
-      // Lấy stores của user hiện tại
-      const res = await fetch(`http://localhost:3000/store?user_id=${user?._id}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
+      const res = await fetch(`http://localhost:3000/stores/${user?._id}`, {
+        method: "GET"
       });
 
       const data = await res.json();
 
       if (res.ok) {
-        // Nếu API trả về một object, convert thành array
         if (Array.isArray(data)) {
           setStores(data);
-        } else if (data.stores) {
-          setStores(Array.isArray(data.stores) ? data.stores : []);
         } else {
-          setStores([]);
+          setStores([data]); 
         }
       } else {
         setError(data.message || "Không thể tải danh sách stores");
@@ -76,9 +68,6 @@ export default function SellerStorePage() {
       {stores.length === 0 ? (
         <div className="empty-state">
           <p>Bạn chưa có store nào</p>
-          <p style={{ fontSize: "14px", color: "#666" }}>
-            Vui lòng liên hệ quản trị viên để tạo store
-          </p>
         </div>
       ) : (
         <div className="stores-grid">

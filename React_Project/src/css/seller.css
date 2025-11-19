@@ -3,11 +3,12 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  width: 1595px;
   background-color: #f5f5f5;
 }
 
 .seller-header {
-  background-color: #c23e00ff;
+  background-color: #0b3eac;
   color: white;
   padding: 15px 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -110,11 +111,11 @@
 
 .nav-link:hover {
   background-color: #f5f5f5;
-  color: #c23e00ff;
+  color: #0b3eac;
 }
 
 .nav-link.active {
-  background-color: #c23e00ff;
+  background-color: #0b3eac;
   color: white;
 }
 
@@ -174,13 +175,13 @@
 
 .action-btn:hover {
   background-color: #f5f5f5;
-  border-color: #c23e00ff;
-  color: #c23e00ff;
+  border-color: #0b3eac;
+  color: #0b3eac;
 }
 
 .action-btn.add-btn {
-  background-color: #c23e00ff;
-  border-color: #c23e00ff;
+  background-color: #0b3eac;
+  border-color: #0b3eac;
   color: white;
 }
 
@@ -218,7 +219,7 @@
 }
 
 .store-card-header {
-  background: linear-gradient(135deg, #c23e00ff, #f5a623);
+  background: #0b3eac;
   color: white;
   padding: 15px;
   display: flex;
@@ -241,13 +242,13 @@
 }
 
 .store-status.active {
-  background-color: rgba(76, 175, 80, 0.3);
-  color: #2e7d32;
+  background-color: rgba(0, 255, 8, 0.3);
+  color: #00ff0d;
 }
 
 .store-status.inactive {
-  background-color: rgba(244, 67, 54, 0.3);
-  color: #c62828;
+  background-color: rgba(255, 17, 0, 0.3);
+  color: #ff0000;
 }
 
 .store-card-body {
@@ -271,7 +272,7 @@
 .store-btn {
   width: 100%;
   padding: 10px 15px;
-  background-color: #c23e00ff;
+  background-color: #0b3eac;
   color: white;
   border: none;
   border-radius: 6px;
@@ -282,8 +283,9 @@
 }
 
 .store-btn:hover {
-  background-color: #a83200;
   transform: translateY(-2px);
+  background-color: #062e85;
+  color: white;
 }
 
 /* ===== STORE DETAIL ===== */
@@ -313,8 +315,8 @@
 
 .back-btn:hover {
   background-color: #f5f5f5;
-  border-color: #c23e00ff;
-  color: #c23e00ff;
+  border-color: #0b3eac;
+  color: #0b3eac;
 }
 
 .detail-header h1 {
@@ -382,7 +384,7 @@
 
 .price {
   font-weight: 600;
-  color: #c23e00ff;
+  color: #0b3eac;
 }
 
 .status-badge {
@@ -517,7 +519,7 @@
 }
 
 .modal-close:hover {
-  color: #c23e00ff;
+  color: #0b3eac;
 }
 
 .modal-close:disabled {
@@ -561,7 +563,7 @@
 .form-group textarea:focus,
 .form-group select:focus {
   outline: none;
-  border-color: #c23e00ff;
+  border-color: #0b3eac;
   box-shadow: 0 0 0 3px rgba(194, 62, 0, 0.1);
 }
 
@@ -602,7 +604,7 @@
 }
 
 .btn-save {
-  background-color: #c23e00ff;
+  background-color: #0b3eac;
   color: white;
 }
 

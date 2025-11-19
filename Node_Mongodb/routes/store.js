@@ -17,6 +17,16 @@ router.get("/get", async (req, res) => {
   }
 });
 
+router.get("/:id", async (req, res) => {
+    try {
+        const user_id = await req.params.id;
+        const result = await store.findOne({ user_id: new ObjectId(user_id) });
+        res.json(result);
+    } catch (error) {
+        return res.status(500).json({ message: "" })
+    } 
+});
+
 router.get("/get/:id", async (req, res) => {
     try {
         const store_id = await req.params.id;
@@ -36,7 +46,7 @@ router.post("/create", async (req, res) => {
       name,
       address: address || "",
       phone: phone || "",
-      status: status || "pending", // pending | active | banned
+      status: status || "pending", 
       created_at: new Date(),
     };
     const result = await store.insertOne(doc);
@@ -47,7 +57,6 @@ router.post("/create", async (req, res) => {
   }
 });
 
-// PUT /stores/update/:id — sửa shop
 router.put("/update/:id", async (req, res) => {
   try {
     const id = req.params.id;

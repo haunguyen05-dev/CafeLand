@@ -30,7 +30,7 @@ export default function StoreDetail() {
       setError("");
 
       // Lấy thông tin store
-      const storeRes = await fetch(`http://localhost:3000/store/${id}`, {
+      const storeRes = await fetch(`http://localhost:3000/stores/get/${id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -43,7 +43,7 @@ export default function StoreDetail() {
 
       // Lấy products của store
       const productsRes = await fetch(
-        `http://localhost:3000/product?store_id=${id}`,
+        `http://localhost:3000/products/store/${id}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
