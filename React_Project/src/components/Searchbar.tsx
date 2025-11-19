@@ -29,3 +29,5 @@ export function Searchbar({ onSearch }: SearchbarProps) {
     </div>
   );
 }
+
+export default Searchbar;

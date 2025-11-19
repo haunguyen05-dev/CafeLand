@@ -120,3 +120,45 @@
 .checkout-btn:active {
     transform: translateY(1px);
 }
+
+/* Ô nhập voucher gọn, bám theo style cũ */
+.cart-voucher-row {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.cart-voucher-row input {
+    width: 220px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid #d1d5db;
+    font-size: 0.95rem;
+}
+
+.cart-voucher-row button {
+    padding: 6px 14px;
+    border-radius: 6px;
+    border: none;
+    background: #0b3eac;
+    color: #fff;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.cart-voucher-row button:hover:not(:disabled) {
+    background: #072d82;
+}
+
+.cart-voucher-row button:disabled {
+    opacity: 0.7;
+    cursor: default;
+}
+
+.cart-voucher-message {
+    font-size: 0.85rem;
+    color: #555;
+    margin-bottom: 6px;
+}

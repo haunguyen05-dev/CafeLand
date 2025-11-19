@@ -65,3 +65,5 @@ export function Product({ selectedCategory, searchTerm = "" }: ProductProps) {
     </ul>
   );
 }
+
+export default Product;

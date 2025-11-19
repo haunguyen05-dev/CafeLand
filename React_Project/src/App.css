@@ -28,7 +28,7 @@ body {
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   color: #333;
   min-height: 100vh;
-  width: 1595px;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;

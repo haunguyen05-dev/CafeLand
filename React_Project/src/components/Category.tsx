@@ -49,3 +49,5 @@ export function Category({ onSelectCategory, selectedCategory }: CategoryProps) 
     </div>
   );
 }
+
+export default Category;
