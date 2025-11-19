@@ -13,7 +13,11 @@ export function Register() {
     
     // State hiển thị trạng thái tải hoặc lỗi
     const [loading, setLoading] = useState(false);
+<<<<<<< HEAD
     const [isOpen, setIsOpen] = useState(true);
+=======
+    const [role, setRole] = useState("user");
+>>>>>>> 059be5a (fix role)
 
     const onRegister = async (e: React.FormEvent) => {
         e.preventDefault(); // Ngăn reload trang
@@ -117,6 +121,13 @@ export function Register() {
                             onChange={(e) => setPhone(e.target.value)}
                             placeholder="Nhập số điện thoại (tùy chọn)"
                         />
+                        <select value={role} onChange={(e) => setRole(e.target.value)}>
+                            <option value="user">User</option>
+                            <option value="store">Store</option>
+                        </select>
+                    </div>
+
+                    <div>
                         <select value={role} onChange={(e) => setRole(e.target.value)}>
                             <option value="user">User</option>
                             <option value="store">Store</option>
