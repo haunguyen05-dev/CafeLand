@@ -27,7 +27,6 @@ export function Login() {
       if (res.ok) {
         
         localStorage.setItem("user", JSON.stringify(data.user))
-        localStorage.setItem("token", JSON.stringify(data.token));
         alert("Đăng nhập thành công!");
         window.location.href = "/";
       } else {

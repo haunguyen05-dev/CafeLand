@@ -113,13 +113,13 @@ export function Register() {
                     <div style={{"marginTop": "5px"}}>
                         <input 
                             type="text" 
-                            value={phone}
+                            value={phone}   
                             onChange={(e) => setPhone(e.target.value)}
                             placeholder="Nhập số điện thoại (tùy chọn)"
                         />
                         <select value={role} onChange={(e) => setRole(e.target.value)}>
                             <option value="user">User</option>
-                            <option value="store">Store</option>
+                            <option value="seller">Seller</option>
                         </select>
                     </div>
 
