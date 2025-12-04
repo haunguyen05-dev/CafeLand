@@ -9,59 +9,86 @@ import DeleteConfirmModal from "../components/DeleteConfirmModal";
 export default function StoreDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+
   const [store, setStore] = useState<Store | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
+  const [orders, setOrders] = useState<any[]>([]);
+
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+
   const [showAddModal, setShowAddModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [deletingProduct, setDeletingProduct] = useState<Product | null>(null);
 
   useEffect(() => {
-    if (id) {
-      fetchStoreAndProducts();
-    }
+    if (id) fetchStoreAndProducts();
   }, [id]);
 
+  // ================= SAFE JSON PARSER =================
+  const safeJson = async (res: Response) => {
+    const text = await res.text(); // lấy raw text để tránh lỗi parse
+    console.log("RAW RESPONSE:", text);
+
+    if (!text) return null;
+    try {
+      return JSON.parse(text);
+    } catch (e) {
+      console.error("JSON PARSE FAILED:", e);
+      return null;
+    }
+  };
+
+  // ================= FETCH STORE + PRODUCTS + ORDERS =================
   const fetchStoreAndProducts = async () => {
     try {
       setLoading(true);
-      setError("");
 
-      // Lấy thông tin store
+      // ==== STORE ====
       const storeRes = await fetch(`http://localhost:3000/stores/get/${id}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
 
-      const storeData = await storeRes.json();
-      if (storeRes.ok) {
+      const storeData = await safeJson(storeRes);
+      if (storeRes.ok && storeData) {
         setStore(storeData.store || storeData);
+      } else {
+        console.warn("STORE API trả rỗng hoặc lỗi");
       }
 
-      // Lấy products của store
-      const productsRes = await fetch(
-        `http://localhost:3000/products/store/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
+      // ==== PRODUCTS ====
+      const productsRes = await fetch(`http://localhost:3000/products/store/${id}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
+
+      const productsData = await safeJson(productsRes);
+      setProducts(
+        Array.isArray(productsData)
+          ? productsData
+          : productsData?.products || []
       );
 
-      const productsData = await productsRes.json();
-      if (productsRes.ok) {
-        setProducts(Array.isArray(productsData) ? productsData : productsData.products || []);
-      }
+      // ==== ORDERS ====
+      const ordersRes = await fetch(`http://localhost:3000/orders/store/${id}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
+
+      const ordersData = await safeJson(ordersRes);
+      setOrders(
+        Array.isArray(ordersData)
+          ? ordersData
+          : ordersData?.orders || []
+      );
+
     } catch (error) {
-      console.error("Lỗi fetch:", error);
-      setError("Không thể tải dữ liệu");
+      console.error("Fetch ERROR:", error);
     } finally {
       setLoading(false);
     }
   };
+
+  // ================= CRUD PRODUCT =================
 
   const handleAddProduct = () => {
     setEditingProduct(null);
@@ -79,181 +106,188 @@ export default function StoreDetail() {
   };
 
   const handleConfirmDelete = async () => {
-    if (!deletingProduct || !id) return;
-
+    if (!deletingProduct) return;
     try {
-      const res = await fetch(`http://localhost:3000/product/${deletingProduct._id}`, {
+      const res = await fetch(`http://localhost:3000/products/${deletingProduct._id}`, {
         method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
 
+      const data = await safeJson(res);
       if (res.ok) {
-        alert("Xóa sản phẩm thành công!");
+        alert("Xóa thành công!");
         setProducts(products.filter((p) => p._id !== deletingProduct._id));
       } else {
-        const data = await res.json();
-        alert(data.message || "Không thể xóa sản phẩm");
+        alert(data?.message || "Xóa thất bại");
       }
+
     } catch (error) {
-      console.error("Lỗi xóa:", error);
-      alert("Không thể kết nối đến server");
-    } finally {
-      setShowDeleteModal(false);
-      setDeletingProduct(null);
+      alert("Không thể kết nối server");
     }
+
+    setShowDeleteModal(false);
+    setDeletingProduct(null);
   };
 
   const handleSaveProduct = async (formData: FormData) => {
     try {
       const url = editingProduct
-        ? `http://localhost:3000/product/${editingProduct._id}`
-        : "http://localhost:3000/product";
+        ? `http://localhost:3000/products/update/${editingProduct._id}`
+        : "http://localhost:3000/products/add";
 
       const method = editingProduct ? "PUT" : "POST";
 
       const res = await fetch(url, {
         method,
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         body: formData,
       });
 
-      const data = await res.json();
+      const data = await safeJson(res);
 
       if (res.ok) {
-        alert(
-          editingProduct
-            ? "Cập nhật sản phẩm thành công!"
-            : "Thêm sản phẩm thành công!"
-        );
+        alert(editingProduct ? "Cập nhật thành công!" : "Thêm thành công!");
         setShowAddModal(false);
         setEditingProduct(null);
         fetchStoreAndProducts();
       } else {
-        alert(data.message || "Có lỗi xảy ra");
+        alert(data?.message || "Lỗi không xác định");
       }
+
     } catch (error) {
-      console.error("Lỗi save:", error);
-      alert("Không thể kết nối đến server");
+      alert("Không thể kết nối server");
     }
   };
 
-  if (loading) {
-    return (
-      <div className="store-detail-container">
-        <p>Đang tải dữ liệu...</p>
-      </div>
-    );
-  }
+  // ================ UI RENDER ================
 
-  if (!store) {
-    return (
-      <div className="store-detail-container">
-        <p>Không tìm thấy store</p>
-      </div>
-    );
-  }
+  if (loading) return <p>Đang tải dữ liệu...</p>;
+  if (!store) return <p>Không tìm thấy store</p>;
+
+  const statusMap: Record<string, string> = {
+    pending: "Chờ xử lý",
+    completed: "Hoàn thành",
+    cancelled: "Đã hủy",
+  };
 
   return (
     <div className="store-detail-container">
+
+      {/* HEADER */}
       <div className="detail-header flex-between">
         <div className="flex-center" style={{ gap: "15px" }}>
-          <button 
-            className="back-btn"
-            onClick={() => navigate("/seller")}
-            title="Quay lại"
-          >
+          <button className="back-btn" onClick={() => navigate("/seller")}>
             <IoArrowBack size={20} />
           </button>
+
           <div>
             <h1>{store.name}</h1>
-            <p className="store-info">{store.address} | {store.phone}</p>
+            <p>{store.address} | {store.phone}</p>
           </div>
         </div>
+
         <div className="detail-actions flex-center" style={{ gap: "10px" }}>
-          <button 
-            className="action-btn refresh-btn"
-            onClick={fetchStoreAndProducts}
-            title="Làm mới"
-          >
+          <button className="action-btn refresh-btn" onClick={fetchStoreAndProducts}>
             <IoRefresh size={20} />
           </button>
-          <button 
-            className="action-btn add-btn"
-            onClick={handleAddProduct}
-          >
-            <IoAdd size={20} />
-            <span>Thêm Sản Phẩm</span>
+
+          <button className="action-btn add-btn" onClick={handleAddProduct}>
+            <IoAdd size={20} /><span>Thêm Sản Phẩm</span>
           </button>
         </div>
       </div>
 
-      {error && <div className="error-message">{error}</div>}
+      {/* PRODUCTS TABLE */}
+      <div className="products-table">
+        <h2>Danh Sách Sản Phẩm</h2>
 
-      {products.length === 0 ? (
-        <div className="empty-state">
-          <p>Chưa có sản phẩm nào</p>
-          <button 
-            className="store-btn"
-            onClick={handleAddProduct}
-          >
-            <IoAdd size={16} />
-            Thêm sản phẩm đầu tiên
-          </button>
-        </div>
-      ) : (
-        <div className="products-table">
+        {products.length === 0 ? (
+          <div className="empty-state">
+            <p>Chưa có sản phẩm</p>
+          </div>
+        ) : (
           <table>
             <thead>
               <tr>
                 <th>STT</th>
-                <th>Tên Sản Phẩm</th>
+                <th>Tên</th>
                 <th>Giá</th>
-                <th>Danh Mục</th>
-                <th>Trạng Thái</th>
-                <th>Ngày Tạo</th>
-                <th>Hành Động</th>
+                <th>Danh mục</th>
+                <th>Trạng thái</th>
+                <th>Ngày tạo</th>
+                <th>Hành động</th>
               </tr>
             </thead>
             <tbody>
-              {products.map((product, index) => (
-                <tr key={product._id}>
-                  <td>{index + 1}</td>
-                  <td className="product-name">{product.name}</td>
-                  <td className="price">{product.price.toLocaleString("vi-VN")} ₫</td>
-                  <td>{product.category_id}</td>
+              {products.map((p, i) => (
+                <tr key={p._id}>
+                  <td>{i + 1}</td>
+                  <td>{p.name}</td>
+                  <td>{p.price.toLocaleString("vi-VN")} ₫</td>
+                  <td>{p.category_id}</td>
                   <td>
-                    <span className={`status-badge ${product.status}`}>
-                      {product.status === "active" ? "Hoạt động" : "Tạm dừng"}
+                    <span className={`status-badge ${p.status}`}>
+                      {p.status === "active" ? "Hoạt động" : "Tạm dừng"}
                     </span>
                   </td>
-                  <td>{new Date(product.created_at).toLocaleDateString("vi-VN")}</td>
-                  <td className="action-buttons">
-                    <button 
-                      className="btn-edit"
-                      onClick={() => handleEditProduct(product)}
-                      title="Sửa"
-                    >
-                      <IoPencil size={16} />
+                  <td>{new Date(p.created_at).toLocaleDateString("vi-VN")}</td>
+                  <td>
+                    <button className="btn-edit" onClick={() => handleEditProduct(p)}>
+                      <IoPencil />
                     </button>
-                    <button 
-                      className="btn-delete"
-                      onClick={() => handleDeleteProduct(product)}
-                      title="Xóa"
-                    >
-                      <IoTrash size={16} />
+                    <button className="btn-delete" onClick={() => handleDeleteProduct(p)}>
+                      <IoTrash />
                     </button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
-        </div>
-      )}
+        )}
+      </div>
 
+      {/* ORDERS TABLE */}
+      <div className="products-table" style={{ marginTop: "40px" }}>
+        <h2>Danh Sách Đơn Hàng</h2>
+
+        {orders.length === 0 ? (
+          <div className="empty-state"><p>Chưa có đơn hàng</p></div>
+        ) : (
+          <table>
+            <thead>
+              <tr>
+                <th>STT</th>
+                <th>Mã Đơn</th>
+                <th>Khách hàng</th>
+                <th>Tổng tiền</th>
+                <th>Trạng thái</th>
+                <th>Ngày tạo</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {orders.map((order, index) => (
+                <tr key={order._id}>
+                  <td>{index + 1}</td>
+                  <td>{order._id}</td>
+                  <td>{order.user_id}</td>
+                  <td>{order.total_amount.toLocaleString("vi-VN")} ₫</td>
+
+                  <td>
+                    <span className={`status-badge ${order.order_status}`}>
+                      {statusMap[order.order_status] || order.order_status}
+                    </span>
+                  </td>
+
+                  <td>{new Date(order.created_at).toLocaleDateString("vi-VN")}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+
+      {/* MODALS */}
       {showAddModal && (
         <AddEditProductModal
           storeId={id || ""}

@@ -36,7 +36,7 @@ router.get("/get/:id", async (req, res) => {
 router.post("/add", async (req, res) => {
   try {
     const {store_id, name, description, price, category_id, quantity, status, images} = req.body;
-    const newProduct = {product_id: new ObjectId(), store_id: ObjectId(store_id), name, description, price: Number(price), category_id: ObjectId(category_id), quantity: Number(quantity), status: status || "active", created_at: new Date(), images: images || [],
+    const newProduct = {product_id: new ObjectId(), store_id: new ObjectId(store_id), name, description, price: Number(price), category_id: new ObjectId(category_id), quantity: Number(quantity), status: status || "active", created_at: new Date(), images: images || [],
     };
 
     await product.insertOne(newProduct);
@@ -50,11 +50,20 @@ router.post("/add", async (req, res) => {
 router.put("/update/:id", async (req, res) => {
   try {
     const id = req.params.id;
-    const {name, description, price, category_id, quantity, status} = req.body;
+    const { name, description, price, category_id, quantity, status } = req.body;
+
+    const updateData = {
+      name,
+      description,
+      price: Number(price),
+      category_id: new ObjectId(category_id),
+      quantity: Number(quantity),
+      status
+    };
 
     const result = await product.updateOne(
-      { _id: ObjectId(id) },
-      { $set: {name, description, price, category_id, quantity, status} } 
+      { _id: new ObjectId(id) },
+      { $set: updateData }
     );
 
     if (result.matchedCount === 0)
@@ -63,7 +72,7 @@ router.put("/update/:id", async (req, res) => {
     res.json({ message: "Cập nhật sản phẩm thành công!" });
   } catch (error) {
     console.error("Lỗi khi cập nhật sản phẩm:", error);
-    res.status(500).json({ message: "Lỗi server" });
+    res.status(500).json({ message: "Lỗi server", error: error.message });
   }
 });
 

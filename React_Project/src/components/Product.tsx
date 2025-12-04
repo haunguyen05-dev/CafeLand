@@ -37,7 +37,7 @@ export function Product({ selectedCategory, searchTerm = "" }: ProductProps) {
   if (loading) return <p>Đang tải sản phẩm...</p>;
 
   const filtered = products.filter((p) =>
-    p.name.toLowerCase().includes(searchTerm.toLowerCase())
+    (p.name ?? "").toLowerCase().includes((searchTerm ?? "").toLowerCase())
   );
 
   return (
@@ -48,8 +48,11 @@ export function Product({ selectedCategory, searchTerm = "" }: ProductProps) {
         filtered.map((product) => (
           <li key={product._id} className="product-item">
             <Link to={`/product/${product._id}`}>
-              <p style={{ fontWeight: 550, marginBottom: "10px", marginTop: "15px", fontSize: "1.05rem", color: "#222", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", display: "block", width: "100%" }}>{product.name.toUpperCase()}</p>
-              <img src={product.images[0].image_url} alt={product.name} />
+              <p style={{ fontWeight: 550, marginBottom: "10px", marginTop: "15px", fontSize: "1.05rem", color: "#222", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", display: "block", width: "100%", "textTransform": "uppercase" }}>{product.name}</p>
+              <img
+                src={product.images?.[0]?.image_url || "/no-image.png"}
+                alt={product.name || "Sản phẩm"}
+              />
             </Link>
             <div className="pd-footer flex-center">
               <div className="btn">
@@ -57,7 +60,7 @@ export function Product({ selectedCategory, searchTerm = "" }: ProductProps) {
                   <BsCartPlusFill />
                 </div>
               </div>
-              <p style={{color: "#c23e00ff", fontSize: "20px", alignItems: "flex-end", textAlign: "end"}}>{product.price.toLocaleString()}đ</p>
+              <p style={{color: "#c23e00ff", fontSize: "20px", alignItems: "flex-end", textAlign: "end"}}>{(product.price ?? 0).toLocaleString()}đ</p>
             </div>
           </li>
         ))

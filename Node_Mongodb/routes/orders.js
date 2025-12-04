@@ -9,8 +9,23 @@ import { connectDB } from '../db.js';
 
 const router = express.Router();
 const db = await connectDB();
+const order = db.collection("orders");
+
 router.get('/', function (req, res, next) {
   res.render('orderlist', { title: 'Danh sách đơn hàng' });
+});
+
+router.get("/store/:id", async (req, res) => {
+    try {
+        const storeId = req.params.id;
+
+        const orders = await order.find({ store_id: new ObjectId(storeId) }).toArray();
+
+        return res.json(orders);
+    } catch (err) {
+        console.error("Lỗi lấy đơn hàng theo store:", err);
+        res.status(500).json({ message: "Server error" });
+    }
 });
 
 router.get('/create_payment_url', function (req, res, next) {
@@ -18,12 +33,10 @@ router.get('/create_payment_url', function (req, res, next) {
 });
 
 router.get('/querydr', function (req, res, next) {
-  let desc = 'truy van ket qua thanh toan';
   res.render('querydr', { title: 'Truy vấn kết quả thanh toán' });
 });
 
 router.get('/refund', function (req, res, next) {
-  let desc = 'Hoan tien GD thanh toan';
   res.render('refund', { title: 'Hoàn tiền giao dịch thanh toán' });
 });
 
@@ -44,8 +57,7 @@ router.post('/create_payment_url', async function (req, res, next) {
   let vnpUrl = config.get('vnp_Url');
   let returnUrl = config.get('vnp_ReturnUrl');
   let orderId = moment(date).format('DDHHmmss');
-  
-  // Lấy 'amount' (từ client) và 'user_id'
+
   const { amount, user_id } = req.body; 
   let bankCode = req.body.bankCode;
 
@@ -63,7 +75,6 @@ router.post('/create_payment_url', async function (req, res, next) {
   vnp_Params['vnp_TxnRef'] = orderId;
   vnp_Params['vnp_OrderInfo'] = 'Thanh toan cho ma GD:' + orderId;
   vnp_Params['vnp_OrderType'] = 'other';
-  // vnp_Params['vnp_Amount'] = amount * 100; // Sẽ set lại giá trị này sau khi xác thực
   vnp_Params['vnp_ReturnUrl'] = returnUrl;
   vnp_Params['vnp_IpAddr'] = ipAddr;
   vnp_Params['vnp_CreateDate'] = createDate;
@@ -73,7 +84,6 @@ router.post('/create_payment_url', async function (req, res, next) {
 
   const database = db;
 
-  // Sửa: Dùng new ObjectId() nếu user_id trong CSDL là ObjectId
   const cart = await database.collection("carts").findOne({ user_id: new ObjectId(user_id) });
 
   if (!cart || !cart.items || cart.items.length === 0) {
@@ -81,6 +91,7 @@ router.post('/create_payment_url', async function (req, res, next) {
       .status(400)
       .json({ message: 'Không tìm thấy giỏ hàng hoặc giỏ hàng trống.' });
   }
+
   const totalAmountInCart = cart.items.reduce(
     (sum, item) => sum + item.total_price, 0
   );
@@ -113,8 +124,8 @@ router.post('/create_payment_url', async function (req, res, next) {
             total_price: item.total_price 
         };
     }),
-    status: 0, 
-    total_amount: totalAmountInCart, 
+    status: 0,
+    total_amount: totalAmountInCart,
     create_at: new Date(),
   };
   
@@ -161,18 +172,14 @@ router.get('/vnpay_return', async function (req, res) {
     const order = await database.collection("orders").findOne({ _id });
 
     if (order) {
-
-      // Cập nhật trạng thái order
       await database.collection("orders").updateOne(
         { _id },
         { $set: { status: 1 } }
       );
 
-      // Xóa giỏ hàng đúng cách
       await database.collection("carts").deleteOne({
         user_id: new ObjectId(order.user_id)
       });
-
     }
 
     return res.redirect(
@@ -183,7 +190,6 @@ router.get('/vnpay_return', async function (req, res) {
 
   return res.redirect('http://localhost:5173/vnpay_return?vnp_ResponseCode=97');
 });
-
 
 router.get('/vnpay_ipn', function (req, res, next) {
     let vnp_Params = req.query;
@@ -204,26 +210,19 @@ router.get('/vnpay_ipn', function (req, res, next) {
     let hmac = crypto.createHmac("sha512", secretKey);
     let signed = hmac.update(new Buffer(signData, 'utf-8')).digest("hex");     
     
-    let paymentStatus = '0'; // Giả sử '0' là trạng thái khởi tạo giao dịch, chưa có IPN. Trạng thái này được lưu khi yêu cầu thanh toán chuyển hướng sang Cổng thanh toán VNPAY tại đầu khởi tạo đơn hàng.
-    //let paymentStatus = '1'; // Giả sử '1' là trạng thái thành công bạn cập nhật sau IPN được gọi và trả kết quả về nó
-    //let paymentStatus = '2'; // Giả sử '2' là trạng thái thất bại bạn cập nhật sau IPN được gọi và trả kết quả về nó
+    let paymentStatus = '0';
     
-    let checkOrderId = true; // Mã đơn hàng "giá trị của vnp_TxnRef" VNPAY phản hồi tồn tại trong CSDL của bạn
-    let checkAmount = true; // Kiểm tra số tiền "giá trị của vnp_Amout/100" trùng khớp với số tiền của đơn hàng trong CSDL của bạn
-    if(secureHash === signed){ //kiểm tra checksum
+    let checkOrderId = true;
+    let checkAmount = true;
+
+    if(secureHash === signed){
         if(checkOrderId){
             if(checkAmount){
-                if(paymentStatus=="0"){ //kiểm tra tình trạng giao dịch trước khi cập nhật tình trạng thanh toán
+                if(paymentStatus=="0"){
                     if(rspCode=="00"){
-                        //thanh cong
-                        //paymentStatus = '1'
-                        // Ở đây cập nhật trạng thái giao dịch thanh toán thành công vào CSDL của bạn
                         res.status(200).json({RspCode: '00', Message: 'Success'})
                     }
                     else {
-                        //that bai
-                        //paymentStatus = '2'
-                        // Ở đây cập nhật trạng thái giao dịch thanh toán thất bại vào CSDL của bạn
                         res.status(200).json({RspCode: '00', Message: 'Success'})
                     }
                 }
@@ -244,7 +243,6 @@ router.get('/vnpay_ipn', function (req, res, next) {
     }
 });
 
-// SỬA LẠI /querydr DÙNG AXIOS
 router.post('/querydr', async function (req, res, next) {
   process.env.TZ = 'Asia/Ho_Chi_Minh';
   let date = new Date();
@@ -307,13 +305,12 @@ router.post('/querydr', async function (req, res, next) {
 
   try {
     const response = await axios.post(vnp_Api, dataObj);
-    console.log(response.data); // Dùng response.data với axios
+    console.log(response.data);
   } catch (error) {
     console.error("Lỗi khi gọi VNPAY API (querydr):", error.message);
   }
 });
 
-// SỬA LẠI /refund DÙNG AXIOS
 router.post('/refund', async function (req, res, next) {
   process.env.TZ = 'Asia/Ho_Chi_Minh';
   let date = new Date();
@@ -371,6 +368,7 @@ router.post('/refund', async function (req, res, next) {
     vnp_IpAddr +
     '|' +
     vnp_OrderInfo;
+
   let hmac = crypto.createHmac('sha512', secretKey);
   let vnp_SecureHash = hmac.update(Buffer.from(data, 'utf-8')).digest('hex');
 
@@ -393,13 +391,12 @@ router.post('/refund', async function (req, res, next) {
 
   try {
     const response = await axios.post(vnp_Api, dataObj);
-    console.log(response.data); // Dùng response.data với axios
+    console.log(response.data);
   } catch (error) {
     console.error("Lỗi khi gọi VNPAY API (refund):", error.message);
   }
 });
 
-// --- HÀM SORT (Không đổi) ---
 function sortObject(obj) {
   let sorted = {};
   let str = [];
@@ -416,5 +413,4 @@ function sortObject(obj) {
   return sorted;
 }
 
-// 4. Chuyển đổi 'module.exports' sang 'export default'
 export default router;

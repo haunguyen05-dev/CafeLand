@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { IoClose } from "react-icons/io5";
-import type { Product } from "../../../interfaces/Product";
+import type { Product, Image } from "../../../interfaces/Product";
 
 interface AddEditProductModalProps {
   storeId: string;
-  product?: Product | null;
+  product?: Product | null; // Nếu có thì là Edit, không có là Add
   onClose: () => void;
-  onSave: (formData: FormData) => void;
+  onSave: (formData: FormData, isEdit: boolean) => void; // truyền isEdit để backend biết
 }
 
 export default function AddEditProductModal({
@@ -20,27 +20,30 @@ export default function AddEditProductModal({
   const [price, setPrice] = useState("");
   const [categoryId, setCategoryId] = useState("");
   const [status, setStatus] = useState("active");
-  const [images, setImages] = useState<File[]>([]);
+  const [images, setImages] = useState<Image[]>([]);
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState<any[]>([]);
+  const [imageInput, setImageInput] = useState(""); // input để hiển thị URL đầu tiên
 
   useEffect(() => {
-    // Fetch danh mục
     fetchCategories();
 
-    // Nếu đang edit, populate dữ liệu
     if (product) {
       setName(product.name);
       setDescription(product.description);
       setPrice(product.price.toString());
       setCategoryId(product.category_id);
       setStatus(product.status);
+      setImages(product.images || []);
+      if (product.images && product.images.length > 0) {
+        setImageInput(product.images[0].image_url); // hiển thị ảnh đầu tiên
+      }
     }
   }, [product]);
 
   const fetchCategories = async () => {
     try {
-      const res = await fetch("http://localhost:3000/category");
+      const res = await fetch("http://localhost:3000/categories/get");
       const data = await res.json();
       if (res.ok) {
         setCategories(Array.isArray(data) ? data : data.categories || []);
@@ -50,10 +53,18 @@ export default function AddEditProductModal({
     }
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setImages(Array.from(e.target.files));
-    }
+  const handleImageChange = (url: string) => {
+    setImageInput(url);
+    // Cập nhật ảnh đầu tiên
+    const newImages: Image[] = [
+      {
+        image_url: url,
+        is_primary: true,
+        created_at: new Date().toISOString(),
+      },
+      ...images.slice(1),
+    ];
+    setImages(newImages);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -62,21 +73,19 @@ export default function AddEditProductModal({
 
     try {
       const formData = new FormData();
+      formData.append("store_id", storeId);
       formData.append("name", name);
       formData.append("description", description);
       formData.append("price", price);
       formData.append("category_id", categoryId);
       formData.append("status", status);
-      formData.append("store_id", storeId);
+      formData.append("images", JSON.stringify(images));
 
-      // Thêm hình ảnh nếu có
-      images.forEach((image) => {
-        formData.append("images", image);
-      });
+      if (product?._id) formData.append("_id", product._id);
 
-      await onSave(formData);
+      await onSave(formData, !!product?._id);
     } catch (error) {
-      console.error("Lỗi:", error);
+      console.error("Lỗi submit:", error);
     } finally {
       setLoading(false);
     }
@@ -87,11 +96,7 @@ export default function AddEditProductModal({
       <div className="modal-content modal-lg">
         <div className="modal-header flex-between">
           <h2>{product ? "Sửa Sản Phẩm" : "Thêm Sản Phẩm"}</h2>
-          <button 
-            className="modal-close"
-            onClick={onClose}
-            disabled={loading}
-          >
+          <button className="modal-close" onClick={onClose} disabled={loading}>
             <IoClose size={24} />
           </button>
         </div>
@@ -103,7 +108,7 @@ export default function AddEditProductModal({
               id="name"
               type="text"
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={e => setName(e.target.value)}
               placeholder="Nhập tên sản phẩm"
               required
             />
@@ -114,7 +119,7 @@ export default function AddEditProductModal({
             <textarea
               id="description"
               value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              onChange={e => setDescription(e.target.value)}
               placeholder="Nhập mô tả sản phẩm"
               rows={4}
             />
@@ -127,7 +132,7 @@ export default function AddEditProductModal({
                 id="price"
                 type="number"
                 value={price}
-                onChange={(e) => setPrice(e.target.value)}
+                onChange={e => setPrice(e.target.value)}
                 placeholder="Nhập giá"
                 min="0"
                 required
@@ -139,11 +144,11 @@ export default function AddEditProductModal({
               <select
                 id="category"
                 value={categoryId}
-                onChange={(e) => setCategoryId(e.target.value)}
+                onChange={e => setCategoryId(e.target.value)}
                 required
               >
                 <option value="">-- Chọn danh mục --</option>
-                {categories.map((cat) => (
+                {categories.map(cat => (
                   <option key={cat._id} value={cat._id}>
                     {cat.name}
                   </option>
@@ -153,11 +158,7 @@ export default function AddEditProductModal({
 
             <div className="form-group">
               <label htmlFor="status">Trạng Thái</label>
-              <select
-                id="status"
-                value={status}
-                onChange={(e) => setStatus(e.target.value)}
-              >
+              <select id="status" value={status} onChange={e => setStatus(e.target.value)}>
                 <option value="active">Hoạt động</option>
                 <option value="inactive">Tạm dừng</option>
               </select>
@@ -165,35 +166,29 @@ export default function AddEditProductModal({
           </div>
 
           <div className="form-group">
-            <label htmlFor="images">Hình Ảnh</label>
+            <label>Hình Ảnh (URL)</label>
             <input
-              id="images"
-              type="file"
-              multiple
-              accept="image/*"
-              onChange={handleImageChange}
+              type="text"
+              placeholder="Nhập URL hình ảnh"
+              value={imageInput}
+              onChange={e => handleImageChange(e.target.value)}
             />
-            {images.length > 0 && (
-              <p style={{ fontSize: "14px", color: "#666", marginTop: "8px" }}>
-                {images.length} hình ảnh được chọn
-              </p>
+            {imageInput && (
+              <div style={{ marginTop: "10px" }}>
+                <img
+                  src={imageInput}
+                  alt="Preview"
+                  style={{ width: "150px", height: "150px", objectFit: "cover", borderRadius: "8px" }}
+                />
+              </div>
             )}
           </div>
 
           <div className="modal-footer">
-            <button
-              type="button"
-              className="btn-cancel"
-              onClick={onClose}
-              disabled={loading}
-            >
+            <button type="button" className="btn-cancel" onClick={onClose} disabled={loading}>
               Hủy
             </button>
-            <button
-              type="submit"
-              className="btn-save"
-              disabled={loading}
-            >
+            <button type="submit" className="btn-save" disabled={loading}>
               {loading ? "Đang xử lý..." : "Lưu"}
             </button>
           </div>
